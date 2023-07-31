@@ -5,7 +5,7 @@ import 'package:insta_app/controller/layout_cubit.dart';
 import 'package:insta_app/controller/layout_cubit.dart';
 import 'package:insta_app/controller/layout_states.dart';
 import 'package:insta_app/screens/profile.dart';
-import 'package:insta_app/screens/testttt.dart';
+import 'package:insta_app/screens/user_search_profile_screenn.dart';
  
 import 'package:insta_app/shared/colors.dart';
 
@@ -86,7 +86,7 @@ class SearchPage extends StatelessWidget {
                          // layoutCubit.iddddddddddd=user!.id;
                           final posts= await layoutCubit.getUserrrrrrrrPosts(user!.id!);
                           print("user from index: ${user.name}");
-                          print("Post from user: ${posts[0].username}");
+                         // print("Post from user: ${posts[0].username}");
                           print('********************');
                           if (layoutCubit.userrrrrrrposts.length>0) {
                              Navigator.push(context,

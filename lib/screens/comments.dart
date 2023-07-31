@@ -18,7 +18,7 @@ class CommentsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = BlocProvider.of<LayoutCubit>(context)
-      ..getCommentFromFireStore(postId: postId);
+      ..getCommentFromFireStore( postId: postId);
 
     return BlocConsumer<LayoutCubit, LayoutStates>(
       listener: (context, state) {},

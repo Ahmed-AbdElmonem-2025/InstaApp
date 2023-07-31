@@ -312,6 +312,14 @@ class Registercreen extends StatelessWidget {
                             )
                             : const Text('Sign Up',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,),),
                       ),
+                     SizedBox(height: 10,),
+                      Center(child: Container(
+                        color: Color.fromARGB(255, 46, 45, 45),
+                        child: TextButton(onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return LoginScreen();
+                          }));
+                        }, child: Text('you have an acount?  Login',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.amber,),))))
                     ],
                   ),
                 ),

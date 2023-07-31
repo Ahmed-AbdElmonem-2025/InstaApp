@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insta_app/controller/layout_cubit.dart';
 import 'package:insta_app/cubit/home_cubit.dart';
 import 'package:insta_app/cubit/home_states.dart';
 import 'package:insta_app/screens/add_post.dart';
@@ -32,7 +33,7 @@ class _MobileScreenState extends State<MobileScreen> {
   @override
   Widget build(BuildContext context) {
     
-   
+   final layoutCubit= BlocProvider.of<LayoutCubit>(context);
     return BlocProvider<HomeCubit>(
       
       create: (context) {
@@ -102,7 +103,7 @@ class _MobileScreenState extends State<MobileScreen> {
             physics: const NeverScrollableScrollPhysics(),
             children:  [
               
-               HomePage(),
+               HomePage(postModel: layoutCubit.posts,),
                 SearchPage(),
                 AddPostPage(),
                 Center(child: Text('llllllll')),

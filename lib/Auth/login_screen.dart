@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_app/Auth/auth_cubit.dart';
 import 'package:insta_app/Auth/auth_states.dart';
+import 'package:insta_app/Auth/register_screen.dart';
 import 'package:insta_app/responsive/mobile.dart';
 import 'package:insta_app/responsive/responsive.dart';
 import 'package:insta_app/responsive/web.dart';
@@ -172,6 +173,15 @@ class LoginScreen extends StatelessWidget {
                         )
                       : const Text('Login',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.black),),
                 ),
+
+                 SizedBox(height: 50,),
+                      Center(child: Container(
+                        color: Color.fromARGB(255, 46, 45, 45),
+                        child: TextButton(onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return Registercreen();
+                          }));
+                        }, child: Text('you do not have an acount?  Register',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.amber,),))))
               ],
             ),
           );

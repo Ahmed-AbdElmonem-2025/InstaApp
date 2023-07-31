@@ -117,22 +117,41 @@ class LayoutCubit extends Cubit<LayoutStates> {
 
 // get posts real time at home screen
   List<PostModel> posts = [];
-
-  getPosts() {
-    emit(GetPostRealTimesSuccessState());
-    FirebaseFirestore.instance
+  List<String> pppppppostid = [];
+  List<int> postComments = [];
+  getPosts() async {
+  //  emit(GetPostRealTimesLoadingState());
+    
+    await FirebaseFirestore.instance
         .collection('posts')
-        .orderBy('datePuplished', descending: true)
+        .orderBy('datePuplished', descending: false)
         .snapshots()
         .listen((value) {
-      posts.clear();
+       posts.clear();
+     pppppppostid.clear();
+    postComments.clear();
       for (var item in value.docs) {
+           
+       
+        item.reference.collection('comments').get().then((value) {
+        postComments.add(value.docs.length);
+       // emit(GetPostRealTimesSuccessState());
         posts.add(PostModel.fromJson(data: item.data()));
-        print(
-            "///////////////////" "{$posts.toString()}" "///////////////////");
-      }
+        // emit(GetPostRealTimesSuccessState());
+        pppppppostid.add(item.id);
+        
+        emit(GetPostRealTimesSuccessState());
+        }).catchError((onError){
 
-      emit(GetPostRealTimesLoadingState());
+        });
+       
+
+        print(
+            "/////'${item.id}'//////////////" "{$posts.toString()}" "///////////////////");
+      
+      }
+      
+      // emit(GetPostRealTimesLoadingState());
     });
   }
 
@@ -193,6 +212,7 @@ class LayoutCubit extends Cubit<LayoutStates> {
 
   UserModel? getUserFromIndex(index) {
     userModelllll = usersFiltered[index];
+   
     // iddddddddddd=usersFiltered[index].id;
     if (userModelllll!.follwers!.contains(Constants.userId)) {
       showFollow = false;
@@ -343,6 +363,8 @@ class LayoutCubit extends Cubit<LayoutStates> {
           'uid': userModel!.id,
           'commentId': commentId,
         });
+     // await  getCommentFromFireStore(postId: postId);
+     
         emit(UploadCommentToFireStoreSuccessState());
       } else {
         print('emptyyyyy');
@@ -352,40 +374,99 @@ class LayoutCubit extends Cubit<LayoutStates> {
     }
   }
 
+ 
+  
+ 
 
-
-
+  
 // get Comment From FireStore as a real time
-  List/*<Map<String, dynamic>>*/ comments=[];
- /*Future <List<Map<String, dynamic>>?>*/ getCommentFromFireStore({required postId}) async {
-   // emit(GetMyDataErrorState());
-      comments.clear();
+  List<Map<String, dynamic>> comments = [];
+   
+ /* Future <List<Map<String, dynamic>>?>*/ getCommentFromFireStore(
+      {required postId}) async {
+    // emit(GetMyDataErrorState());
+    comments.clear();
     await FirebaseFirestore.instance
         .collection('posts')
         .doc(postId)
-        .collection('comments').orderBy('datePublished',descending: true)
+        .collection('comments')
+        .orderBy('datePublished', descending: true)
         .snapshots()
         .listen((event) {
-          comments.clear();
+       comments.clear();
+       
+      
       for (var element in event.docs) {
         comments.add(element.data());
       }
-       
+    
+    
       emit(GetMyDataSuccessState());
+      
+    
     });
+  }
  
 
 
 
-    /*  Future aaa()async {
-   var data =     FirebaseFirestore.instance
-    .collection('users')
-    .doc(userModelllll!.id).get();
-  for (var element in data) {
-    
-  }
-  }*/
 
+
+
+ // delete post from home screen
+deletepostfromhomescreen({required postID})async{
+ await FirebaseFirestore.instance.collection('posts').doc(postID).delete();
+ emit(GetMyDataErrorState());
+}
+
+  
+
+
+
+
+// add like to post at home page
+ like({required postid})async{
+ await FirebaseFirestore.instance.collection('posts').doc(postid).update({
+      'likes': FieldValue.arrayUnion([Constants.userId])
+    });
+   // emit(GetMyDataErrorState());
+ }
+// remove like from post at home page
+ unlike({required postid})async{
+ await FirebaseFirestore.instance.collection('posts').doc(postid).update({
+      'likes': FieldValue.arrayRemove([Constants.userId])
+    });
+  // emit(GetMyDataErrorState());
+ }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+ 
     /*
     PostModel? postModel;
     List<PostModel> a=[];
@@ -421,7 +502,7 @@ class LayoutCubit extends Cubit<LayoutStates> {
     }
   }
 */
-  }
+   
 
 /* List<PostModel> userSearchedPosts = [];
  getUserSearchedPosts() async {
@@ -637,4 +718,4 @@ class LayoutCubit extends Cubit<LayoutStates> {
       emit(GetMessagesSuccessState());
      });
   }*/
-}
+ 
