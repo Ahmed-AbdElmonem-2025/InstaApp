@@ -25,7 +25,7 @@ main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+/// مشكلة التطبيق عند رفع بوست لم يتم اظهاره كريل تايم
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -35,8 +35,8 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<LayoutCubit>(
           create: (BuildContext context) => LayoutCubit()
-            ..getMyData()
-            ..getPosts(),
+            ..getMyData()..getPosts(),
+          
         ),
       ],
       child: MaterialApp(
@@ -45,9 +45,9 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home:/* /*UserSearchProfileScreen()*/ Constants.userId != null
+        home: /*UserSearchProfileScreen()*/ Constants.userId != null
             ? Responsive(mobScreen: MobileScreen(), webScreen: WebScreen())
-            :*/ Registercreen(),
+            : Registercreen(),
         //  home:  Responsive(mobScreen:MobileScreen() ,webScreen:WebScreen() ),
       ),
     );

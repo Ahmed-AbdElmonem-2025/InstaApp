@@ -42,6 +42,9 @@ class GetUserPostsInHisProfileErrorState extends LayoutStates {}
  class  UploadCommentToFireStoreSuccessState extends LayoutStates {}
  class  UploadCommentToFireStoreLoadingState extends LayoutStates {}
  class  UploadCommentToFireStoreErrorState extends LayoutStates {}
+
+  class  LikeSuccessState extends LayoutStates {}
+ class   UnLikeSuccessState extends LayoutStates {}
 /*
 class GetUsersLoadingState extends LayoutStates {}
 class GetUsersDataSuccessState extends LayoutStates {}

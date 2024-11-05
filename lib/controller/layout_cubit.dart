@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -106,7 +107,10 @@ class LayoutCubit extends Cubit<LayoutStates> {
             // .doc(Random().nextInt(20000).toString())
             .doc(newId)
             .set(postModel.toJson());
-        emit(CreatPostSuccessState());
+          
+         emit(CreatPostSuccessState());
+
+         Future.delayed(Duration(milliseconds: 500), ()=>   getUserPosts());
         print("///////////////////" "{$postModel}" "///////////////////");
         print('done.......................');
       } on FirebaseException catch (e) {
@@ -117,42 +121,80 @@ class LayoutCubit extends Cubit<LayoutStates> {
 
 // get posts real time at home screen
   List<PostModel> posts = [];
+  //List<PostModel> postsData = [];
   List<String> pppppppostid = [];
   List<int> postComments = [];
+  //bool shouldUpdatePosts=true;
   getPosts() async {
-  //  emit(GetPostRealTimesLoadingState());
-    
+    log('get data');
+    emit(GetPostRealTimesLoadingState());
+
     await FirebaseFirestore.instance
-        .collection('posts')
-        .orderBy('datePuplished', descending: false)
+        .collection('posts') /*.get().then((value)async {*/
+        .orderBy('datePuplished', descending: true)
+        .get()
+        .then((value) {
+          log('get dataaaaaaaaaaaaaaaa');
+      pppppppostid.clear();
+      postComments.clear();
+      posts.clear();
+
+      for (var item in value.docs) {
+        item.reference.collection('comments').get().then((value) {
+          postComments.add(value.docs.length);
+          // emit(GetPostRealTimesSuccessState());
+          posts.add(PostModel.fromJson(data: item.data()));
+
+          pppppppostid.add(item.id);
+          print('ooooooooooooooooooooooooooooooooooo');
+          print(item.id);
+          print('ooooooooooooooooooooooooooooooooooo');
+
+          emit(GetPostRealTimesSuccessState());
+        }).catchError((onError) {});
+
+        print("/////'${item.id}'//////////////"
+            "{$posts.toString()}"
+            "///////////////////");
+      }
+       
+      // 
+      
+    }); 
+
+    /*  await FirebaseFirestore.instance
+        .collection('posts') /*.get().then((value)async {*/
+        .orderBy('datePuplished', descending: true)
         .snapshots()
         .listen((value) {
-       posts.clear();
-     pppppppostid.clear();
-    postComments.clear();
+          log('get dataaaaaaaaaaaaaaaa');
+     //  pppppppostid.clear();
+    //  postComments.clear();
+      postsData.clear();
+
       for (var item in value.docs) {
-           
-       
-        item.reference.collection('comments').get().then((value) {
-        postComments.add(value.docs.length);
-       // emit(GetPostRealTimesSuccessState());
-        posts.add(PostModel.fromJson(data: item.data()));
-        // emit(GetPostRealTimesSuccessState());
-        pppppppostid.add(item.id);
-        
-        emit(GetPostRealTimesSuccessState());
-        }).catchError((onError){
+        postsData.add(PostModel.fromJson(data: item.data()));
+          item.reference.collection('comments').get().then((value) {
+          postComments.add(value.docs.length);
+           // emit(GetPostRealTimesSuccessState());
+          
+          
+          pppppppostid.add(item.id);
+          print('ooooooooooooooooooooooooooooooooooo');
+          print(item.id);
+          print('ooooooooooooooooooooooooooooooooooo');
+          
+          emit(GetPostRealTimesSuccessState());
+        }).catchError((onError) {});
 
-        });
-       
-
-        print(
-            "/////'${item.id}'//////////////" "{$posts.toString()}" "///////////////////");
-      
+        print("/////'${item.id}'//////////////"
+            "{$posts.toString()}"
+            "///////////////////");
       }
-      
-      // emit(GetPostRealTimesLoadingState());
-    });
+       
+      // 
+        
+    }); */
   }
 
 // مراجعة كيف يتم استدعاء الداتا تدريجيا من الفايربيز
@@ -212,7 +254,8 @@ class LayoutCubit extends Cubit<LayoutStates> {
 
   UserModel? getUserFromIndex(index) {
     userModelllll = usersFiltered[index];
-   
+    usersFiltered = [];
+    users = [];
     // iddddddddddd=usersFiltered[index].id;
     if (userModelllll!.follwers!.contains(Constants.userId)) {
       showFollow = false;
@@ -363,8 +406,8 @@ class LayoutCubit extends Cubit<LayoutStates> {
           'uid': userModel!.id,
           'commentId': commentId,
         });
-     // await  getCommentFromFireStore(postId: postId);
-     
+        // await  getCommentFromFireStore(postId: postId);
+
         emit(UploadCommentToFireStoreSuccessState());
       } else {
         print('emptyyyyy');
@@ -374,18 +417,14 @@ class LayoutCubit extends Cubit<LayoutStates> {
     }
   }
 
- 
-  
- 
-
-  
 // get Comment From FireStore as a real time
   List<Map<String, dynamic>> comments = [];
-   
- /* Future <List<Map<String, dynamic>>?>*/ getCommentFromFireStore(
+
+  /* Future <List<Map<String, dynamic>>?>*/ getCommentFromFireStore(
       {required postId}) async {
     // emit(GetMyDataErrorState());
-    comments.clear();
+     
+   
     await FirebaseFirestore.instance
         .collection('posts')
         .doc(postId)
@@ -393,81 +432,55 @@ class LayoutCubit extends Cubit<LayoutStates> {
         .orderBy('datePublished', descending: true)
         .snapshots()
         .listen((event) {
-       comments.clear();
-       
-      
+      comments.clear();
+
       for (var element in event.docs) {
         comments.add(element.data());
+         print('wwwwwwwwwwwwwwwwwwwwwwwwwww ${comments}');
       }
-    
-    
-      emit(GetMyDataSuccessState());
-      
-    
+         print('wwwwwwwwwwwwwwwwwwwwwwwwwww ${comments.length}');
+        emit(GetMyDataSuccessState());
     });
   }
- 
 
-
-
-
-
-
- // delete post from home screen
-deletepostfromhomescreen({required postID})async{
- await FirebaseFirestore.instance.collection('posts').doc(postID).delete();
- emit(GetMyDataErrorState());
-}
-
-  
-
-
-
+  // delete post from home screen
+  deletepostfromhomescreen({required postID}) async {
+    await FirebaseFirestore.instance.collection('posts').doc(postID).delete();
+    emit(GetMyDataErrorState());
+  }
 
 // add like to post at home page
- like({required postid})async{
- await FirebaseFirestore.instance.collection('posts').doc(postid).update({
+  like({
+    required postid,
+  }) async {
+    await FirebaseFirestore.instance.collection('posts').doc(postid).update({
       'likes': FieldValue.arrayUnion([Constants.userId])
     });
-   // emit(GetMyDataErrorState());
- }
+PostModel post = posts.where((element) => element.postId == postid).first;
+
+ // posts[postid].likes ??  
+
+ post.likes!.add(Constants.userId);
+     emit(LikeSuccessState());
+  }
+
 // remove like from post at home page
- unlike({required postid})async{
- await FirebaseFirestore.instance.collection('posts').doc(postid).update({
+  unlike({required postid}) async {
+
+
+    await FirebaseFirestore.instance.collection('posts').doc(postid).update({
       'likes': FieldValue.arrayRemove([Constants.userId])
     });
-  // emit(GetMyDataErrorState());
- }
 
+    PostModel post = posts.where((element) => element.postId == postid).first;
 
+   post.likes!.removeWhere((e)=> e == Constants.userId);
+
+    emit(UnLikeSuccessState());
+  }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
- 
-
-
-
-
-
-
-
- 
-    /*
+/*
     PostModel? postModel;
     List<PostModel> a=[];
   getUserrPosts({required String uid}) async {
@@ -502,7 +515,6 @@ deletepostfromhomescreen({required postID})async{
     }
   }
 */
-   
 
 /* List<PostModel> userSearchedPosts = [];
  getUserSearchedPosts() async {
@@ -718,4 +730,3 @@ deletepostfromhomescreen({required postID})async{
       emit(GetMessagesSuccessState());
      });
   }*/
- 

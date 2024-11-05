@@ -130,7 +130,10 @@ class AddPostPage extends StatelessWidget {
           children: [
             CircleAvatar(
                radius: 33,
-               backgroundImage: NetworkImage("https://www.dreamzone.co.in/blog/wp-content/uploads/2022/05/Sound-of-cartoon-characters-1.jpg"),
+               backgroundImage: NetworkImage(
+                "${layoutCubit.userModel!.image}"
+               // "https://www.dreamzone.co.in/blog/wp-content/uploads/2022/05/Sound-of-cartoon-characters-1.jpg"
+                ),
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width*0.3,

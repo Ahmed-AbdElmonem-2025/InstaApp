@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class CommentsScreen extends StatelessWidget {
+  
   final String postId;
   final UserModel userModel;
   final commentController = TextEditingController();
@@ -17,12 +20,17 @@ class CommentsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     final cubit = BlocProvider.of<LayoutCubit>(context)
       ..getCommentFromFireStore( postId: postId);
-
+print('kkkkkkkkkkkkkkkkk ${postId}');
+print('kkkkkkkkkkkkkkkkk ${cubit.comments.length}');
     return BlocConsumer<LayoutCubit, LayoutStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+
+      },
       builder: (context, state) {
+        
         return Scaffold(
           backgroundColor: mobileBackGroundColor,
           appBar: AppBar(
